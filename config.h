@@ -167,6 +167,20 @@ static const Key keys[] = {
 	{ MODKEY,                    XKB_KEY_Return,      zoom,             {0} },
 	{ MODKEY,                    XKB_KEY_Tab,         view,             {0} },
 	{ MODKEY, 		    		 XKB_KEY_q,           killclient,       {0} },
+	{ WLR_MODIFIER_ALT,    		 XKB_KEY_t,           setlayout,        {.v = &layouts[0]} },
+	{ WLR_MODIFIER_ALT,    		 XKB_KEY_f,           setlayout,        {.v = &layouts[1]} },
+	{ WLR_MODIFIER_ALT,			 XKB_KEY_m,           setlayout,        {.v = &layouts[2]} },
+	{ WLR_MODIFIER_ALT,          XKB_KEY_space,       setlayout,        {0} },
+	//
+	{ WLR_MODIFIER_ALT|WLR_MODIFIER_SHIFT, 		XKB_KEY_space,       togglefloating,   {0} },
+	{ WLR_MODIFIER_ALT|WLR_MODIFIER_SHIFT,      XKB_KEY_f,           togglefullscreen, {0} },
+	//
+	{ MODKEY,                    XKB_KEY_0,           view,             {.ui = ~0} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_parenright,  tag,              {.ui = ~0} },
+	{ MODKEY,                    XKB_KEY_comma,       focusmon,         {.i = WLR_DIRECTION_LEFT} },
+	{ MODKEY,                    XKB_KEY_period,      focusmon,         {.i = WLR_DIRECTION_RIGHT} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_less,        tagmon,           {.i = WLR_DIRECTION_LEFT} },
+	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_greater,     tagmon,           {.i = WLR_DIRECTION_RIGHT} },
 	/* vanitygaps start */
 	{ MODKEY|WLR_MODIFIER_LOGO,  XKB_KEY_h,          incgaps,       {.i = +1 } },
 	{ MODKEY|WLR_MODIFIER_LOGO,  XKB_KEY_l,          incgaps,       {.i = -1 } },
@@ -185,22 +199,10 @@ static const Key keys[] = {
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Y,          incovgaps,     {.i = +1 } },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_O,          incovgaps,     {.i = -1 } },
 	/* vanitygaps end */
+	/* rotate-clients start */
 	{ WLR_MODIFIER_ALT, 		 XKB_KEY_J,           rotate_clients,   {.i = +1} },
     { WLR_MODIFIER_ALT, 		 XKB_KEY_K,           rotate_clients,   {.i = -1} },
-	{ WLR_MODIFIER_ALT,    		 XKB_KEY_t,           setlayout,        {.v = &layouts[0]} },
-	{ WLR_MODIFIER_ALT,    		 XKB_KEY_f,           setlayout,        {.v = &layouts[1]} },
-	{ WLR_MODIFIER_ALT,			 XKB_KEY_m,           setlayout,        {.v = &layouts[2]} },
-	{ WLR_MODIFIER_ALT,          XKB_KEY_space,       setlayout,        {0} },
-	//
-	{ WLR_MODIFIER_ALT|WLR_MODIFIER_SHIFT, 		XKB_KEY_space,       togglefloating,   {0} },
-	{ WLR_MODIFIER_ALT|WLR_MODIFIER_SHIFT,      XKB_KEY_e,           togglefullscreen, {0} },
-	//
-	{ MODKEY,                    XKB_KEY_0,           view,             {.ui = ~0} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_parenright,  tag,              {.ui = ~0} },
-	{ MODKEY,                    XKB_KEY_comma,       focusmon,         {.i = WLR_DIRECTION_LEFT} },
-	{ MODKEY,                    XKB_KEY_period,      focusmon,         {.i = WLR_DIRECTION_RIGHT} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_less,        tagmon,           {.i = WLR_DIRECTION_LEFT} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_greater,     tagmon,           {.i = WLR_DIRECTION_RIGHT} },
+	/* rotate-clients end */
 	/* Start of user-made hotkeys */
 	{ MODKEY,		     		 XKB_KEY_s,			  spawn,	    	{.v = screenshot_clipboard}},
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_s,           spawn,            {.v = screenshot_area}},
