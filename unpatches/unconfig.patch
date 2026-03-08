@@ -1,0 +1,6 @@
+141c141
+< 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_t,     	  spawn,            {.v = termcmd} },
+---
+> 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_t,      spawn,            {.v = termcmd} },
+155d154
+< 	{ MODKEY,                    XKB_KEY_a,           setlayout,        {.v = &layouts[3]} },

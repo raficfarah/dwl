@@ -1,4 +1,4 @@
-/* Taken from https://github.com/djpohly/dwl/issues/466 */
+// Taken from https://github.com/djpohly/dwl/issues/466
 #define COLOR(hex)    { ((hex >> 24) & 0xFF) / 255.0f, \
                         ((hex >> 16) & 0xFF) / 255.0f, \
                         ((hex >> 8) & 0xFF) / 255.0f, \
@@ -26,12 +26,6 @@ static char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 /* logging */
 static int log_level = WLR_ERROR;
 
-/* Autostart */
-static const char *const autostart[] = {
-        "wbg", "/path/to/your/image", NULL,
-        NULL /* terminate */
-};
-
 static const Rule rules[] = {
 	/* app_id             title       tags mask     isfloating   monitor */
 	{ "Gimp_EXAMPLE",     NULL,       0,            1,           -1 }, /* Start on currently visible tags floating, not tiled */
@@ -45,7 +39,7 @@ static const Layout layouts[] = {
 	{ "[]=",      tile },
 	{ "><>",      NULL },    /* no layout function means floating behavior */
 	{ "[M]",      monocle },
-	
+	{ "||",       col },
 };
 
 /* monitors */
@@ -56,10 +50,8 @@ static const MonitorRule monrules[] = {
    /* name        mfact  nmaster scale layout       rotate/reflect                x    y
     * example of a HiDPI laptop monitor:
     { "eDP-1",    0.5f,  1,      2,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   -1,  -1 }, */
-	{ NULL,       0.55f, 1,      1,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   -1,  -1 },
-	/* default monitor rule: can be changed but cannot be eliminated; at least one monitor rule must exist */
-    /*{ "HDMI-A-1", 0.5f,  4,      1,    &layouts[0], WL_OUTPUT_TRANSFORM_270,       0,   0},
-    { "DP-2",     0.5f,  4,      1,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,    1081,360},*/
+    { "HDMI-A-1", 0.5f,  4,      1,    &layouts[0], WL_OUTPUT_TRANSFORM_270,       0,   0},
+    { "DP-2",     0.5f,  4,      1,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,    1081,360},
 };
 
 /* keyboard */
@@ -75,6 +67,18 @@ static const struct xkb_rule_names xkb_rules = {
 
 static const int repeat_rate = 25;
 static const int repeat_delay = 600;
+
+/* Start of user-made configuration */
+
+/* Autostart */
+static const char *const autostart[] = {
+       /* "swaybg", "-o", "HDMI-A-1", "-i", "/home/rafic/Pictures/Wallpapers/cinza-bg.jpg", NULL,
+        "swaybg", "-o", "DP-2", "-i", "/home/rafic/Pictures/Wallpapers/montanha-bg.jpg", NULL, */
+        "/home/rafic/.config/dwl/autostart.sh", NULL,
+        NULL /* terminate */
+};
+
+/* End of user-made configuration */
 
 /* Trackpad */
 static const int tap_to_click = 1;
@@ -132,14 +136,20 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
 /* commands */
-static const char *termcmd[] = { "foot", NULL };
-static const char *menucmd[] = { "wmenu-run", NULL };
+static const char *termcmd[] = { "kitty", NULL };
+static const char *menucmd[] = { "fuzzel", NULL };
+
+/* Screenshot command config start */
+static const char *screenshot_full[]={"/home/rafic/.local/bin/screenshot.sh", "full", NULL};
+static const char *screenshot_area[]={"/home/rafic/.local/bin/screenshot.sh", "area", NULL};
+static const char *screenshot_clipboard[]={"/home/rafic/.local/bin/screenshot.sh", "clipboard", NULL};
+/* Screenshot command config end */
 
 static const Key keys[] = {
 	/* Note that Shift changes certain key codes: 2 -> at, etc. */
 	/* modifier                  key                  function          argument */
 	{ MODKEY,                    XKB_KEY_d,           spawn,            {.v = menucmd} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_t,     	  spawn,            {.v = termcmd} },
+	{ MODKEY, 		     		 XKB_KEY_t,      	  spawn,            {.v = termcmd} },
 	{ MODKEY,                    XKB_KEY_b,           togglebar,        {0} },
 	{ MODKEY,                    XKB_KEY_j,           focusstack,       {.i = +1} },
 	{ MODKEY,                    XKB_KEY_k,           focusstack,       {.i = -1} },
@@ -149,20 +159,27 @@ static const Key keys[] = {
 	{ MODKEY,                    XKB_KEY_l,           setmfact,         {.f = +0.05f} },
 	{ MODKEY,                    XKB_KEY_Return,      zoom,             {0} },
 	{ MODKEY,                    XKB_KEY_Tab,         view,             {0} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_c,           killclient,       {0} },
-	{ MODKEY,                    XKB_KEY_t,           setlayout,        {.v = &layouts[0]} },
-	{ MODKEY,                    XKB_KEY_f,           setlayout,        {.v = &layouts[1]} },
-	{ MODKEY,                    XKB_KEY_m,           setlayout,        {.v = &layouts[2]} },
-	{ MODKEY,                    XKB_KEY_a,           setlayout,        {.v = &layouts[3]} },
-	{ MODKEY,                    XKB_KEY_space,       setlayout,        {0} },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_space,       togglefloating,   {0} },
-	{ MODKEY,                    XKB_KEY_e,           togglefullscreen, {0} },
+	{ MODKEY, 		    		 XKB_KEY_q,           killclient,       {0} },
+	{ WLR_MODIFIER_ALT,    		 XKB_KEY_t,           setlayout,        {.v = &layouts[0]} },
+	{ WLR_MODIFIER_ALT,    		 XKB_KEY_f,           setlayout,        {.v = &layouts[1]} },
+	{ WLR_MODIFIER_ALT,			 XKB_KEY_m,           setlayout,        {.v = &layouts[2]} },
+	{ MODKEY,                    XKB_KEY_c,           setlayout,        {.v = &layouts[3]} },
+	{ WLR_MODIFIER_ALT,          XKB_KEY_space,       setlayout,        {0} },
+	//
+	{ WLR_MODIFIER_ALT|WLR_MODIFIER_SHIFT, 		XKB_KEY_space,       togglefloating,   {0} },
+	{ WLR_MODIFIER_ALT|WLR_MODIFIER_SHIFT,      XKB_KEY_e,           togglefullscreen, {0} },
+	//
 	{ MODKEY,                    XKB_KEY_0,           view,             {.ui = ~0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_parenright,  tag,              {.ui = ~0} },
 	{ MODKEY,                    XKB_KEY_comma,       focusmon,         {.i = WLR_DIRECTION_LEFT} },
 	{ MODKEY,                    XKB_KEY_period,      focusmon,         {.i = WLR_DIRECTION_RIGHT} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_less,        tagmon,           {.i = WLR_DIRECTION_LEFT} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_greater,     tagmon,           {.i = WLR_DIRECTION_RIGHT} },
+	/* Start of user-made hotkeys */
+	{ MODKEY,		     		 XKB_KEY_s,			  spawn,	    	{.v = screenshot_clipboard}},
+	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_s,           spawn,            {.v = screenshot_area}},
+	{ MODKEY|WLR_MODIFIER_ALT,   XKB_KEY_s,           spawn,            {.v = screenshot_full}},
+	/* End of user-made hotkeys */
 	TAGKEYS(          XKB_KEY_1, XKB_KEY_exclam,                        0),
 	TAGKEYS(          XKB_KEY_2, XKB_KEY_at,                            1),
 	TAGKEYS(          XKB_KEY_3, XKB_KEY_numbersign,                    2),
@@ -172,7 +189,7 @@ static const Key keys[] = {
 	TAGKEYS(          XKB_KEY_7, XKB_KEY_ampersand,                     6),
 	TAGKEYS(          XKB_KEY_8, XKB_KEY_asterisk,                      7),
 	TAGKEYS(          XKB_KEY_9, XKB_KEY_parenleft,                     8),
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_q,           quit,             {0} },
+	{ MODKEY|WLR_MODIFIER_ALT,   XKB_KEY_q,           quit,             {0} },
 
 	/* Ctrl-Alt-Backspace and Ctrl-Alt-Fx used to be handled by X server */
 	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT,XKB_KEY_Terminate_Server, quit, {0} },
