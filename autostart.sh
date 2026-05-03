@@ -1,5 +1,7 @@
 #!/bin/bash
 
+/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
+
 sleep 1
 
 wlr-randr --output "DP-2" --on

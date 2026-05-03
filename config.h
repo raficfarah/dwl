@@ -38,14 +38,16 @@ static const Rule rules[] = {
 	/* app_id             title       tags mask     isfloating   monitor */
 	{ "Gimp_EXAMPLE",     NULL,       0,            1,           -1 }, /* Start on currently visible tags floating, not tiled */
 	{ "firefox_EXAMPLE",  NULL,       1 << 8,       0,           -1 }, /* Start on ONLY tag "9" */
+	{ "xed",			  NULL,		  0,			1,			  0 },
+	{ "nemo",			  NULL,		  0,			1,			  1 }
     /* default/example rule: can be changed but cannot be eliminated; at least one rule must exist */
 };
 
 /* layout(s) */
 static const Layout layouts[] = {
 	/* symbol     arrange function */
-	{ "[]=",      tile },
-	{ "><>",      NULL },    /* no layout function means floating behavior */
+	{ "[T]",      tile },
+	{ "[F]",      NULL },    /* no layout function means floating behavior */
 	{ "[M]",      monocle },
 };
 
@@ -54,11 +56,9 @@ static const Layout layouts[] = {
  * WARNING: negative values other than (-1, -1) cause problems with Xwayland clients due to
  * https://gitlab.freedesktop.org/xorg/xserver/-/issues/899 */
 static const MonitorRule monrules[] = {
-   /* name        mfact  nmaster scale layout       rotate/reflect                x    y
-    * example of a HiDPI laptop monitor:
-    { "eDP-1",    0.5f,  1,      2,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,   -1,  -1 }, */
-    { "HDMI-A-1", 0.5f,  4,      1,    &layouts[0], WL_OUTPUT_TRANSFORM_270,       0,   0},
-    { "DP-2",     0.5f,  4,      1,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,    1081,360},
+   /* name        mfact  nmaster scale layout       rotate/reflect                x    y */
+	{ "HDMI-A-1", 0.5f,  0,      1,    &layouts[0], WL_OUTPUT_TRANSFORM_270,       0,   0},
+    { "DP-2",     0.5f,  1,      1,    &layouts[0], WL_OUTPUT_TRANSFORM_NORMAL,    1081,360},
 };
 
 /* keyboard */
@@ -145,7 +145,7 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
 /* commands */
 static const char *termcmd[] = { "kitty", NULL };
 static const char *menucmd[] = { "fuzzel", NULL };
-
+static const char *files[] = {"nemo", NULL};
 /* Screenshot command config start */
 static const char *screenshot_full[]={"/home/rafic/.local/bin/screenshot.sh", "full", NULL};
 static const char *screenshot_area[]={"/home/rafic/.local/bin/screenshot.sh", "area", NULL};
@@ -157,16 +157,17 @@ static const Key keys[] = {
 	/* modifier                  key                  function          argument */
 	{ MODKEY,                    XKB_KEY_d,           spawn,            {.v = menucmd} },
 	{ MODKEY, 		     		 XKB_KEY_t,      	  spawn,            {.v = termcmd} },
+	{ MODKEY, 		     		 XKB_KEY_e,      	  spawn,            {.v = files} },
 	{ MODKEY,                    XKB_KEY_b,           togglebar,        {0} },
 	{ MODKEY,                    XKB_KEY_j,           focusstack,       {.i = +1} },
 	{ MODKEY,                    XKB_KEY_k,           focusstack,       {.i = -1} },
 	{ MODKEY,                    XKB_KEY_i,           incnmaster,       {.i = +1} },
 	{ MODKEY,                    XKB_KEY_p,           incnmaster,       {.i = -1} },
-	{ MODKEY,                    XKB_KEY_h,           setmfact,         {.f = -0.05f} },
-	{ MODKEY,                    XKB_KEY_l,           setmfact,         {.f = +0.05f} },
 	{ MODKEY,                    XKB_KEY_Return,      zoom,             {0} },
 	{ MODKEY,                    XKB_KEY_Tab,         view,             {0} },
 	{ MODKEY, 		    		 XKB_KEY_q,           killclient,       {0} },
+	{ WLR_MODIFIER_ALT,          XKB_KEY_h,           setmfact,         {.f = +0.05f} },
+	{ WLR_MODIFIER_ALT,          XKB_KEY_l,           setmfact,         {.f = -0.05f} },
 	{ WLR_MODIFIER_ALT,    		 XKB_KEY_t,           setlayout,        {.v = &layouts[0]} },
 	{ WLR_MODIFIER_ALT,    		 XKB_KEY_f,           setlayout,        {.v = &layouts[1]} },
 	{ WLR_MODIFIER_ALT,			 XKB_KEY_m,           setlayout,        {.v = &layouts[2]} },
@@ -182,22 +183,22 @@ static const Key keys[] = {
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_less,        tagmon,           {.i = WLR_DIRECTION_LEFT} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_greater,     tagmon,           {.i = WLR_DIRECTION_RIGHT} },
 	/* vanitygaps start */
-	{ MODKEY|WLR_MODIFIER_LOGO,  XKB_KEY_h,          incgaps,       {.i = +1 } },
-	{ MODKEY|WLR_MODIFIER_LOGO,  XKB_KEY_l,          incgaps,       {.i = -1 } },
-	{ MODKEY|WLR_MODIFIER_LOGO|WLR_MODIFIER_SHIFT,   XKB_KEY_H,      incogaps,      {.i = +1 } },
-	{ MODKEY|WLR_MODIFIER_LOGO|WLR_MODIFIER_SHIFT,   XKB_KEY_L,      incogaps,      {.i = -1 } },
-	{ MODKEY|WLR_MODIFIER_LOGO|WLR_MODIFIER_CTRL,    XKB_KEY_h,      incigaps,      {.i = +1 } },
-	{ MODKEY|WLR_MODIFIER_LOGO|WLR_MODIFIER_CTRL,    XKB_KEY_l,      incigaps,      {.i = -1 } },
-	{ MODKEY|WLR_MODIFIER_LOGO,  XKB_KEY_0,          togglegaps,     {0} },
-	{ MODKEY|WLR_MODIFIER_LOGO|WLR_MODIFIER_SHIFT,   XKB_KEY_parenright,defaultgaps,    {0} },
-	{ MODKEY,                    XKB_KEY_y,          incihgaps,     {.i = +1 } },
-	{ MODKEY,                    XKB_KEY_o,          incihgaps,     {.i = -1 } },
-	{ MODKEY|WLR_MODIFIER_CTRL,  XKB_KEY_y,          incivgaps,     {.i = +1 } },
-	{ MODKEY|WLR_MODIFIER_CTRL,  XKB_KEY_o,          incivgaps,     {.i = -1 } },
-	{ MODKEY|WLR_MODIFIER_LOGO,  XKB_KEY_y,          incohgaps,     {.i = +1 } },
-	{ MODKEY|WLR_MODIFIER_LOGO,  XKB_KEY_o,          incohgaps,     {.i = -1 } },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Y,          incovgaps,     {.i = +1 } },
-	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_O,          incovgaps,     {.i = -1 } },
+	{ MODKEY,  					 XKB_KEY_h,           incgaps,       {.i = +1 } },
+	{ MODKEY,  					 XKB_KEY_l,           incgaps,       {.i = -1 } },
+	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_H,      	  incogaps,      {.i = +1 } },
+	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_L,      	  incogaps,      {.i = -1 } },
+	{ MODKEY|WLR_MODIFIER_CTRL,  XKB_KEY_h,      	  incigaps,      {.i = +1 } },
+	{ MODKEY|WLR_MODIFIER_CTRL,  XKB_KEY_l,      	  incigaps,      {.i = -1 } },
+	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_parenleft,   togglegaps,    {0} },
+	{ MODKEY|WLR_MODIFIER_ALT,   XKB_KEY_9,	  		  defaultgaps,   {0} },
+	{ MODKEY,                    XKB_KEY_y,           incihgaps,     {.i = +1 } },
+	{ MODKEY,                    XKB_KEY_o,           incihgaps,     {.i = -1 } },
+	{ MODKEY|WLR_MODIFIER_CTRL,  XKB_KEY_y,           incivgaps,     {.i = +1 } },
+	{ MODKEY|WLR_MODIFIER_CTRL,  XKB_KEY_o,           incivgaps,     {.i = -1 } },
+	{ MODKEY|WLR_MODIFIER_ALT,	 XKB_KEY_y,           incohgaps,     {.i = +1 } },
+	{ MODKEY|WLR_MODIFIER_ALT,   XKB_KEY_o,           incohgaps,     {.i = -1 } },
+	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Y,           incovgaps,     {.i = +1 } },
+	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_O,           incovgaps,     {.i = -1 } },
 	/* vanitygaps end */
 	/* rotate-clients start */
 	{ WLR_MODIFIER_ALT, 		 XKB_KEY_J,           rotate_clients,   {.i = +1} },
